@@ -59,7 +59,7 @@ func init() {
 func NewTCPProxy() *TCPProxy {
 	config := &Config{
 		TCPPort:           getEnv("TCP_PORT", "8080"),
-		WebAPIEndpoint:    getEnv("WEB_API_ENDPOINT", ""),
+		WebAPIEndpoint:    getEnv("WEB_API_ENDPOINT", "https://httpbin.org/post"),
 		WebAPIAuthToken:   getEnv("WEB_API_AUTH_TOKEN", ""),
 		MaxConnections:    getEnvInt("MAX_CONNECTIONS", 1000),
 		ConnectionTimeout: time.Duration(getEnvInt("CONNECTION_TIMEOUT", 30)) * time.Second,
@@ -182,6 +182,7 @@ func (p *TCPProxy) forwardToHTTPS(data []byte) ([]byte, error) {
 	}
 
 	// Add authentication header if provided
+
 	if p.config.WebAPIAuthToken != "" {
 		req.Header.Set("Authorization", "Bearer "+p.config.WebAPIAuthToken)
 	}

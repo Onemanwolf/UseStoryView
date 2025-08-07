@@ -1,22 +1,22 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Debug TCP Proxy",
-      "type": "go",
-      "request": "launch",
-      "mode": "debug",
-      "program": "${workspaceFolder}/main.go",
-      "env": {
-        "TCP_PORT": "8080",
-        "METRICS_PORT": "9090",
-        "WEB_API_ENDPOINT": "https://httpbin.org/post",
-        "WEB_API_AUTH_TOKEN": "",
-        "MAX_CONNECTIONS": "100",
-        "CONNECTION_TIMEOUT": "30"
-      },
-      "args": [],
-      "console": "integratedTerminal"
-    }
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug TCP Proxy",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": ".",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "WEB_API_ENDPOINT": "https://httpbin.org/post",
+                "TCP_PORT": "8080",
+                "METRICS_PORT": "9090",
+                "WEB_API_AUTH_TOKEN": "",
+                "MAX_CONNECTIONS": "100",
+                "CONNECTION_TIMEOUT": "30"
+            },
+            "console": "integratedTerminal"
+        }
+    ]
 }

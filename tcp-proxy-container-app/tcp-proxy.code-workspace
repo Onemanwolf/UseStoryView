@@ -1,0 +1,26 @@
+{
+  "folders": [
+    {
+      "name": "TCP Proxy Container App",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "go.buildOnSave": "off",
+    "go.lintOnSave": "off",
+    "go.vetOnSave": "off",
+    "go.useLanguageServer": true,
+    "go.toolsEnvVars": {
+      "WEB_API_ENDPOINT": "https://httpbin.org/post",
+      "TCP_PORT": "8080",
+      "METRICS_PORT": "9090"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "golang.go",
+      "ms-azuretools.vscode-azurecontainerapps",
+      "ms-vscode.vscode-json"
+    ]
+  }
+}

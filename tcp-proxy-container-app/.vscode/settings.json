@@ -1,0 +1,15 @@
+{
+  "go.buildOnSave": "off",
+  "go.lintOnSave": "off",
+  "go.vetOnSave": "off",
+  "go.formatTool": "goimports",
+  "go.useLanguageServer": true,
+  "go.buildFlags": [],
+  "go.testFlags": [],
+  "go.installDependenciesWhenBuilding": true,
+  "go.toolsEnvVars": {},
+  "go.testEnvVars": {},
+  "go.buildTags": "",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000
+}
