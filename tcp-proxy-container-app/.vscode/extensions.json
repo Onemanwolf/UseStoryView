@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "ms-vscode.azure-account",
+    "ms-azuretools.vscode-azurecontainerapps",
+    "ms-azuretools.vscode-docker",
+    "golang.go",
+    "ms-vscode.powershell",
+    "ms-azuretools.vscode-bicep"
+  ]
+}

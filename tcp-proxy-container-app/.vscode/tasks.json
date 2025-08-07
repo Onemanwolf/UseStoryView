@@ -1,0 +1,214 @@
+{
+  "version": "2.0.0",
+  "inputs": [
+    {
+      "id": "webApiEndpoint",
+      "description": "Enter the Web API endpoint URL (e.g., https://api.example.com/endpoint)",
+      "default": "https://your-api.example.com/api/endpoint",
+      "type": "promptString"
+    },
+    {
+      "id": "webApiAuthToken",
+      "description": "Enter the Web API authentication token (optional)",
+      "default": "",
+      "type": "promptString"
+    },
+    {
+      "id": "resourceGroupName",
+      "description": "Enter the Azure Resource Group name",
+      "default": "tcp-proxy-rg",
+      "type": "promptString"
+    },
+    {
+      "id": "location",
+      "description": "Enter the Azure region (e.g., eastus, westus2, northeurope)",
+      "default": "eastus",
+      "type": "promptString"
+    }
+  ],
+  "tasks": [
+    {
+      "label": "Deploy TCP Proxy to Azure Container Apps",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/deploy.ps1",
+        "-WebApiEndpoint",
+        "${input:webApiEndpoint}",
+        "-WebApiAuthToken",
+        "${input:webApiAuthToken}",
+        "-ResourceGroupName",
+        "${input:resourceGroupName}",
+        "-Location",
+        "${input:location}"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "isBackground": false,
+      "runOptions": {
+        "runOn": "default"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Build Docker Image Locally",
+      "type": "shell",
+      "command": "docker",
+      "args": ["build", "-t", "tcp-proxy:latest", "."],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Test Docker Image Locally",
+      "type": "shell",
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-p",
+        "8080:8080",
+        "-p",
+        "9090:9090",
+        "-e",
+        "WEB_API_ENDPOINT=${input:webApiEndpoint}",
+        "-e",
+        "WEB_API_AUTH_TOKEN=${input:webApiAuthToken}",
+        "tcp-proxy:latest"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "dependsOn": "Build Docker Image Locally"
+    },
+    {
+      "label": "Check Azure Login Status",
+      "type": "shell",
+      "command": "az",
+      "args": ["account", "show"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Login to Azure",
+      "type": "shell",
+      "command": "az",
+      "args": ["login"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Install Container Apps Extension",
+      "type": "shell",
+      "command": "az",
+      "args": ["extension", "add", "--name", "containerapp"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "View Container App Logs",
+      "type": "shell",
+      "command": "az",
+      "args": [
+        "containerapp",
+        "logs",
+        "show",
+        "--name",
+        "tcp-proxy-app-${input:resourceToken}",
+        "--resource-group",
+        "${input:resourceGroupName}",
+        "--follow"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Scale Container App",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-Command",
+        "$replicas = Read-Host 'Enter number of replicas (0-50)'; az containerapp update --name tcp-proxy-app-$(az deployment group show --resource-group ${input:resourceGroupName} --name main --query properties.outputs.containerAppName.value -o tsv) --resource-group ${input:resourceGroupName} --min-replicas $replicas --max-replicas $replicas"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Delete Deployment",
+      "type": "shell",
+      "command": "az",
+      "args": [
+        "group",
+        "delete",
+        "--name",
+        "${input:resourceGroupName}",
+        "--yes",
+        "--no-wait"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

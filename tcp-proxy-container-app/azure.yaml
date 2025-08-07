@@ -1,0 +1,15 @@
+name: tcp-proxy-container-app
+metadata:
+  template: tcp-proxy-container-app@0.0.1-beta
+
+workflows:
+  up:
+    steps:
+      - azd: provision
+      - azd: deploy
+
+services:
+  tcp-proxy:
+    project: .
+    language: docker
+    host: containerapp
